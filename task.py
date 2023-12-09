@@ -58,7 +58,7 @@ class RedditWikiBackup:
         page_names = self._reddit.get(f'/r/{subreddit_name}/wiki/pages/')['data']
         subreddit_section = self._config[subreddit_name]
         if not subreddit_section.getboolean('include_config_pages'):
-            page_names = list(filter(lambda x: not x.startswith('config/'), page_names))
+            page_names = list(filter(lambda x: not x.startswith(('config/', 'automoderator/')), page_names))
         return page_names
 
 
