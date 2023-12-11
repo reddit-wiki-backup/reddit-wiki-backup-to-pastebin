@@ -44,7 +44,10 @@ class RedditWikiBackup:
         subreddit = self._reddit.subreddit(subreddit_name)
         subreddit_wiki = subreddit.wiki
 
-        os.mkdir(subreddit.display_name)
+        try:
+            os.mkdir(subreddit.display_name)
+        except FileExistsError:
+            pass
 
         for page_name in self._get_page_names(subreddit_name):
             page_content = subreddit_wiki[page_name].content_md
