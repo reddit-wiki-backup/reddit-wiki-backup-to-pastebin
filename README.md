@@ -1,6 +1,8 @@
 # reddit-wiki-backup-template
 
-## Perform regular or one-time backups of subreddit wikis
+## Purpose
+
+* Perform regular or one-time backups of subreddit wikis
 
 ## How to Use
 
