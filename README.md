@@ -18,7 +18,7 @@ To set this up for subreddit(s) of your choice:
   * `PASSWORD`
 * In `subreddits.ini`, add entries for the subreddits whose wikis you want to back up.
   * The file contains examples.
-  * You can only back up wiki pages that are visible to the authorized account.
+  * You can only back up wiki pages that are viewable by the authorized account.
 * Run the backup:
   * Run one-time backup: In GitHub repository, go to Actions > Run Backup > Run Workflow > Run Workflow
   * Schedule regular backup: In GitHub repository, go to [RunBackup.yml schedule lines](/.github/workflows/RunBackup.yml#L5). Uncomment these two lines.
