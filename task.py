@@ -10,6 +10,7 @@ _WIKI_CONFIG_PAGES = ('config/', 'automoderator/')
 class ConfigKeys:
     INCLUDE_CONFIG_PAGES = 'include_config_pages'
     INCLUDE_ONLY_PAGES = 'include_only_pages'
+    EXCLUDE_PAGES = 'exclude_pages'
 
 
 class RedditWikiBackup:
@@ -74,6 +75,9 @@ class RedditWikiBackup:
 
         if pages_to_include := subreddit_section.get(ConfigKeys.INCLUDE_ONLY_PAGES):
             page_names = set(pages_to_include.split()).intersection(page_names)
+
+        if pages_to_exclude := subreddit_section.get(ConfigKeys.EXCLUDE_PAGES):
+            page_names = page_names.difference(set(pages_to_exclude.split()))
 
         return page_names
 
