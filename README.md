@@ -1,4 +1,4 @@
-# reddit-wiki-backup-template
+# reddit-wiki-backup-to-pastebin
 
 ## Purpose
 
@@ -16,6 +16,10 @@ To set this up for subreddit(s) of your choice:
   * `CLIENT_SECRET`
   * `USERNAME`
   * `PASSWORD`
+* Make a [Pastebin](https://pastebin.com) account, then go to their [Developers API page](https://pastebin.com/doc_api).
+* In GitHub repository settings, go to Settings > Secrets > Actions and add the following repository secrets:
+  * `PASTEBIN_DEV_KEY`
+  * `PASTEBIN_USER_KEY` -- instructions on how to get this are located on the Developers API page
 * In `subreddits.ini`, add entries for the subreddits whose wikis you want to back up.
   * The file contains examples.
   * You can only back up wiki pages that are viewable by the authorized account.

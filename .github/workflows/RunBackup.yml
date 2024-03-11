@@ -1,4 +1,4 @@
-name: Run Backup
+name: Run Backup to Pastebin
 
 on:
   workflow_dispatch:
@@ -14,12 +14,14 @@ jobs:
         with:
           python-version: '3.10'
       - run: pip3 install -r requirements.txt
-      - run: python run_backup.py
+      - run: python run_backup_to_pastebin.py
         env:
           CLIENT_ID: ${{secrets.CLIENT_ID}}
           CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
           USERNAME: ${{secrets.USERNAME}}
           PASSWORD: ${{secrets.PASSWORD}}
+          PASTEBIN_DEV_KEY: ${{secrets.PASTEBIN_DEV_KEY}}
+          PASTEBIN_USER_KEY: ${{secrets.PASTEBIN_USER_KEY}}
       - name: Commit and push if changed
         run: |-
           git config user.name "Actions"
