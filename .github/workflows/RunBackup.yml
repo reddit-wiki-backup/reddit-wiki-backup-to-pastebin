@@ -22,11 +22,3 @@ jobs:
           PASSWORD: ${{secrets.PASSWORD}}
           PASTEBIN_DEV_KEY: ${{secrets.PASTEBIN_DEV_KEY}}
           PASTEBIN_USER_KEY: ${{secrets.PASTEBIN_USER_KEY}}
-      - name: Commit and push if changed
-        run: |-
-          git config user.name "Actions"
-          git config user.email "actions@users.noreply.github.com"
-          git add -A
-          timestamp=$(date -u)
-          git commit -m "Latest data: ${timestamp}" || exit 0
-          git push
