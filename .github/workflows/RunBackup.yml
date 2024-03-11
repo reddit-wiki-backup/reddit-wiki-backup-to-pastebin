@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: '3.10'
       - run: pip3 install -r requirements.txt
-      - run: python task.py
+      - run: python run_backup.py
         env:
           CLIENT_ID: ${{secrets.CLIENT_ID}}
           CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
