@@ -1,3 +1,4 @@
+import configparser
 import datetime
 import os
 import time
@@ -6,6 +7,16 @@ import requests
 from bs4 import BeautifulSoup
 
 from run_backup import RedditWikiBackup
+
+
+class PastebinConfig:
+    FILEPATH = 'pastebin.ini'
+    SECTION = 'pastebin'
+
+
+class PastebinConfigOption:
+    DATE_FORMAT = 'date_format'
+    KEEP_DAYS = 'keep_days'
 
 
 class PbApiUrl:
@@ -26,8 +37,14 @@ class PbApiPastePrivacy:
 
 class PastebinApi:
     def __init__(self) -> None:
+        self.config = None
         self._creds = None
         self._session = None
+
+    def read_config(self) -> None:
+        self.config = configparser.ConfigParser()
+        self.config.read(PastebinConfig.FILEPATH)
+        return
 
     def load_creds(self) -> None:
         self._creds = dict(api_dev_key=os.environ['PASTEBIN_DEV_KEY'], api_user_key=os.environ['PASTEBIN_USER_KEY'])
@@ -60,7 +77,8 @@ class PastebinApi:
         time.sleep(1)
         return
 
-    def delete_historic_pastes(self, pastes: list, keep_days: int) -> None:
+    def delete_historic_pastes(self, pastes: list) -> None:
+        keep_days = self.config.getint(PastebinConfig.SECTION, PastebinConfigOption.KEEP_DAYS)
         cutoff_date = datetime.date.today() - datetime.timedelta(days=keep_days)
         for paste in pastes:
             paste_date = datetime.date.fromtimestamp(int(paste.find('paste_date').text))
@@ -85,12 +103,14 @@ class RedditWikiBackupToPastebin(RedditWikiBackup):
         return
 
     def _clean_pastebin_history(self) -> None:
-        self._pastebin.delete_historic_pastes(self._pastebin.list_pastes_of_user(), keep_days=30)
+        self._pastebin.delete_historic_pastes(self._pastebin.list_pastes_of_user())
         return
 
     def _download_one_subreddit_wiki(self, subreddit_name: str) -> None:
         subreddit = self._reddit.subreddit(subreddit_name)
         subreddit_wiki = subreddit.wiki
+        today_str = datetime.date.today().strftime(self._pastebin.config.get(
+            PastebinConfig.SECTION, PastebinConfigOption.DATE_FORMAT))
 
         try:
             os.mkdir(subreddit.display_name)
@@ -104,8 +124,8 @@ class RedditWikiBackupToPastebin(RedditWikiBackup):
             with open(filepath, 'w', encoding='utf8') as f:
                 f.write(page_content)
 
-            title = '{}_{}.md'.format(filename, datetime.date.today().strftime('%Y-%m-%d'))
-            self._pastebin.create_new_paste_as_user(title, open(filepath, encoding='utf8').read())
+            self._pastebin.create_new_paste_as_user(f'{filename}_{today_str}.md', open(
+                filepath, encoding='utf8').read())
             time.sleep(1)
 
         return
