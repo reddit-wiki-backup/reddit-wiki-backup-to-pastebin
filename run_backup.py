@@ -70,15 +70,16 @@ class RedditWikiBackup:
         return
 
     def _get_page_names(self, subreddit_name: str) -> set:
+        subreddit_section = self._config[subreddit_name]
         page_names = set(self._reddit.get(f'/r/{subreddit_name}/wiki/pages/')['data'])
 
-        if not self._config.getboolean(subreddit_name, TaskConfigOption.INCLUDE_CONFIG_PAGES):
+        if not subreddit_section.getboolean(TaskConfigOption.INCLUDE_CONFIG_PAGES):
             page_names = set(filter(lambda x: not x.startswith(_WIKI_CONFIG_PAGES), page_names))
 
-        if pages_to_include := self._config.get(subreddit_name, TaskConfigOption.INCLUDE_ONLY_PAGES):
+        if pages_to_include := subreddit_section.get(TaskConfigOption.INCLUDE_ONLY_PAGES):
             page_names = set(pages_to_include.split()).intersection(page_names)
 
-        if pages_to_exclude := self._config.get(subreddit_name, TaskConfigOption.EXCLUDE_PAGES):
+        if pages_to_exclude := subreddit_section.get(TaskConfigOption.EXCLUDE_PAGES):
             page_names = page_names.difference(set(pages_to_exclude.split()))
 
         return page_names
