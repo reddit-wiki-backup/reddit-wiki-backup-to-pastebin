@@ -93,8 +93,8 @@ class RedditWikiBackupToPastebin(RedditWikiBackup):
         self._read_config()
         self._create_reddit_instance()
         self._create_pastebin_session()
-        self._download_subreddit_wikis()
         self._clean_pastebin_history()
+        self._download_subreddit_wikis()
         return
 
     def _create_pastebin_session(self) -> None:
