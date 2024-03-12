@@ -77,13 +77,14 @@ class PastebinApi:
         time.sleep(1)
         return
 
-    def delete_historic_pastes(self, pastes: list) -> None:
+    def delete_historic_private_pastes(self, pastes: list) -> None:
         keep_days = self.config.getint(PastebinConfig.SECTION, PastebinConfigOption.KEEP_DAYS)
         cutoff_date = datetime.date.today() - datetime.timedelta(days=keep_days)
         for paste in pastes:
-            paste_date = datetime.date.fromtimestamp(int(paste.find('paste_date').text))
-            if paste_date < cutoff_date:
-                self.delete_paste(paste.find('paste_key').text)
+            if int(paste.find('paste_private').text) == PbApiPastePrivacy.PRIVATE:  # is private
+                paste_date = datetime.date.fromtimestamp(int(paste.find('paste_date').text))
+                if paste_date < cutoff_date:
+                    self.delete_paste(paste.find('paste_key').text)
         return
 
 
@@ -104,7 +105,7 @@ class RedditWikiBackupToPastebin(RedditWikiBackup):
         return
 
     def _clean_pastebin_history(self) -> None:
-        self._pastebin.delete_historic_pastes(self._pastebin.list_pastes_of_user())
+        self._pastebin.delete_historic_private_pastes(self._pastebin.list_pastes_of_user())
         return
 
     def _download_one_subreddit_wiki(self, subreddit_name: str) -> None:
