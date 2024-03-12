@@ -7,7 +7,7 @@ _TASK_CONFIG_FILEPATH = 'subreddits.ini'
 _WIKI_CONFIG_PAGES = ('config/', 'automoderator/')
 
 
-class ConfigKeys:
+class TaskConfigKeys:
     INCLUDE_CONFIG_PAGES = 'include_config_pages'
     INCLUDE_ONLY_PAGES = 'include_only_pages'
     EXCLUDE_PAGES = 'exclude_pages'
@@ -67,16 +67,15 @@ class RedditWikiBackup:
         return
 
     def _get_page_names(self, subreddit_name: str) -> set:
-        subreddit_section = self._config[subreddit_name]
         page_names = set(self._reddit.get(f'/r/{subreddit_name}/wiki/pages/')['data'])
 
-        if not subreddit_section.getboolean(ConfigKeys.INCLUDE_CONFIG_PAGES):
+        if not self._config.getboolean(subreddit_name, TaskConfigKeys.INCLUDE_CONFIG_PAGES):
             page_names = set(filter(lambda x: not x.startswith(_WIKI_CONFIG_PAGES), page_names))
 
-        if pages_to_include := subreddit_section.get(ConfigKeys.INCLUDE_ONLY_PAGES):
+        if pages_to_include := self._config.get(subreddit_name, TaskConfigKeys.INCLUDE_ONLY_PAGES):
             page_names = set(pages_to_include.split()).intersection(page_names)
 
-        if pages_to_exclude := subreddit_section.get(ConfigKeys.EXCLUDE_PAGES):
+        if pages_to_exclude := self._config.get(subreddit_name, TaskConfigKeys.EXCLUDE_PAGES):
             page_names = page_names.difference(set(pages_to_exclude.split()))
 
         return page_names
