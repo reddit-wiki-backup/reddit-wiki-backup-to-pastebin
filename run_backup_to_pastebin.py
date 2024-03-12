@@ -110,8 +110,7 @@ class RedditWikiBackupToPastebin(RedditWikiBackup):
     def _download_one_subreddit_wiki(self, subreddit_name: str) -> None:
         subreddit = self._reddit.subreddit(subreddit_name)
         subreddit_wiki = subreddit.wiki
-        today_str = datetime.date.today().strftime(self._pastebin.config.get(
-            PastebinConfig.SECTION, PastebinConfigOption.DATE_FORMAT))
+        today_str = datetime.date.today().strftime('%Y-%m-%d')
 
         try:
             os.mkdir(subreddit.display_name)
