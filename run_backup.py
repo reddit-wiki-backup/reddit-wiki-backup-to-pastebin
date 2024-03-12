@@ -3,11 +3,14 @@ import os
 
 import praw
 
-_TASK_CONFIG_FILEPATH = 'subreddits.ini'
 _WIKI_CONFIG_PAGES = ('config/', 'automoderator/')
 
 
-class TaskConfigKeys:
+class TaskConfig:
+    FILEPATH = 'subreddits.ini'
+
+
+class TaskConfigOption:
     INCLUDE_CONFIG_PAGES = 'include_config_pages'
     INCLUDE_ONLY_PAGES = 'include_only_pages'
     EXCLUDE_PAGES = 'exclude_pages'
@@ -32,7 +35,7 @@ class RedditWikiBackup:
 
     def _read_config(self) -> None:
         self._config = configparser.ConfigParser()
-        self._config.read(_TASK_CONFIG_FILEPATH)
+        self._config.read(TaskConfig.FILEPATH)
         return
 
     def _create_reddit_instance(self) -> None:
@@ -69,13 +72,13 @@ class RedditWikiBackup:
     def _get_page_names(self, subreddit_name: str) -> set:
         page_names = set(self._reddit.get(f'/r/{subreddit_name}/wiki/pages/')['data'])
 
-        if not self._config.getboolean(subreddit_name, TaskConfigKeys.INCLUDE_CONFIG_PAGES):
+        if not self._config.getboolean(subreddit_name, TaskConfigOption.INCLUDE_CONFIG_PAGES):
             page_names = set(filter(lambda x: not x.startswith(_WIKI_CONFIG_PAGES), page_names))
 
-        if pages_to_include := self._config.get(subreddit_name, TaskConfigKeys.INCLUDE_ONLY_PAGES):
+        if pages_to_include := self._config.get(subreddit_name, TaskConfigOption.INCLUDE_ONLY_PAGES):
             page_names = set(pages_to_include.split()).intersection(page_names)
 
-        if pages_to_exclude := self._config.get(subreddit_name, TaskConfigKeys.EXCLUDE_PAGES):
+        if pages_to_exclude := self._config.get(subreddit_name, TaskConfigOption.EXCLUDE_PAGES):
             page_names = page_names.difference(set(pages_to_exclude.split()))
 
         return page_names
