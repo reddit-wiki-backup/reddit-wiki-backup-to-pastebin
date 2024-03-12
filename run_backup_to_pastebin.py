@@ -98,6 +98,7 @@ class RedditWikiBackupToPastebin(RedditWikiBackup):
 
     def _create_pastebin_session(self) -> None:
         self._pastebin = PastebinApi()
+        self._pastebin.read_config()
         self._pastebin.load_creds()
         self._pastebin.open_session()
         return
