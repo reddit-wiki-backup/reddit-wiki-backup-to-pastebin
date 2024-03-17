@@ -15,7 +15,6 @@ class PastebinConfig:
 
 
 class PastebinConfigOption:
-    DATE_FORMAT = 'date_format'
     KEEP_DAYS = 'keep_days'
 
 
