@@ -14,6 +14,7 @@ class TaskConfigOption:
     INCLUDE_CONFIG_PAGES = 'include_config_pages'
     INCLUDE_ONLY_PAGES = 'include_only_pages'
     EXCLUDE_PAGES = 'exclude_pages'
+    USE_HTML = 'use_html'
 
 
 class RedditWikiBackup:
@@ -55,6 +56,8 @@ class RedditWikiBackup:
     def _download_one_subreddit_wiki(self, subreddit_name: str) -> None:
         subreddit = self._reddit.subreddit(subreddit_name)
         subreddit_wiki = subreddit.wiki
+        use_html = self._config[subreddit_name].getboolean(TaskConfigOption.USE_HTML)
+        file_ext = 'html' if use_html else 'txt'
 
         try:
             os.mkdir(subreddit.display_name)
@@ -62,9 +65,10 @@ class RedditWikiBackup:
             pass
 
         for page_name in self._get_page_names(subreddit_name):
-            page_content = subreddit_wiki[page_name].content_md
+            page = subreddit_wiki[page_name]
+            page_content = page.content_html if use_html else page.content_md
             filename = page_name.replace('/', '.')
-            with open(f'{subreddit.display_name}/{filename}.md', 'w', encoding='utf8') as f:
+            with open(f'{subreddit.display_name}/{filename}.{file_ext}', 'w', encoding='utf8') as f:
                 f.write(page_content)
 
         return
